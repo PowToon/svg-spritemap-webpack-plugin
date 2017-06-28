@@ -9,8 +9,23 @@ var fs = require('fs'),
     RawSource = require('webpack-sources').RawSource;
 
 function SVGSpritemapPlugin(options) {
-    // Merge specified options with default options
-    this.options = extend({}, {
+  // Merge specified options with default options
+  var svgoPlugins = options.svgo && options.svgo.plugins || []
+  var hasCleanupIDsPlugin = svgoPlugins.some(function(plugin){
+    return 'cleanupIDs' in plugin
+  })
+
+  if(!hasCleanupIDsPlugin){
+    svgoPlugins = svgoPlugins.concat([
+      {cleanupIDs: false}
+    ])
+  }
+
+  var svgo = extend({}, options.svgo || {}, {
+    plugins: svgoPlugins
+  })
+
+  this.options = extend({}, {
         src: '**/*.svg',
         svgo: {},
         glob: {},
@@ -20,11 +35,7 @@ function SVGSpritemapPlugin(options) {
         chunk: 'spritemap',
         svg4everybody: false
     }, options, {
-        svgo: {
-            plugins: [{
-                cleanupIDs: false
-            }]
-        }
+        svgo: svgo
     });
 }
 
