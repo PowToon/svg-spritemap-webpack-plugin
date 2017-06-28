@@ -73,7 +73,7 @@ SVGSpritemapPlugin.prototype.apply = function(compiler) {
 
         compilation.plugin('optimize-chunk-assets', function optimizeChunkAssets(chunks, callback) {
             // Optimize spritemap using SVGO
-            if ( options.svgo === false ) {
+            if ( !options.svgo ) {
                 callback();
                 return;
             }
@@ -91,10 +91,11 @@ SVGSpritemapPlugin.prototype.apply = function(compiler) {
                 var SVGOptimizer = new svgo(options.svgo);
                 var filename = chunk.files[1];
 
-                SVGOptimizer.optimize(compilation.assets[filename].source(), function(o) {
-                    compilation.assets[filename] = new RawSource(o.data);
-                    callback();
-                });
+                SVGOptimizer.optimize(compilation.assets[filename].source(), {})
+                    .then(function(o){
+                        compilation.assets[filename] = new RawSource(o.data);
+                        callback();
+                    });
             });
         });
 
