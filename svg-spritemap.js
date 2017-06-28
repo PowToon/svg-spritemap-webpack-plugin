@@ -78,25 +78,30 @@ SVGSpritemapPlugin.prototype.apply = function(compiler) {
                 return;
             }
 
-            chunks = chunks.filter(function(chunk) {
-                return chunk.name === options.chunk;
-            });
+            var assetNames = chunks
+                .filter(function(chunk) {
+                    return chunk.name === options.chunk;
+                })
+                .map(function(chunk){
+                    return chunk.files[1];
+                })
+                .concat(this.additionalChunkAssets || [])
 
-            if ( !chunks.length ) {
+            if(assetNames.length === 0){
                 callback();
                 return;
             }
 
-            chunks.forEach(function(chunk) {
-                var SVGOptimizer = new svgo(options.svgo);
-                var filename = chunk.files[1];
+            var assetName = assetNames[0]
+            var SVGOptimizer = new svgo(options.svgo);
 
-                SVGOptimizer.optimize(compilation.assets[filename].source(), {})
-                    .then(function(o){
-                        compilation.assets[filename] = new RawSource(o.data);
-                        callback();
-                    });
-            });
+
+            SVGOptimizer.optimize(compilation.assets[assetName].source(), {})
+                .then(function(o) {
+                    compilation.assets[assetName] = new RawSource(o.data);
+                    callback();
+                });
+
         });
 
         var generateSVG = function() {
