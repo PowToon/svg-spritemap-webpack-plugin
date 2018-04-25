@@ -40,7 +40,7 @@
         "loader-utils": "^1.1.0",
         "mini-svg-data-uri": "^1.0.0",
         "svg4everybody": "^2.1.9",
-        "svgo": "^1.0.5",
+        "svgo": "git+https://github.com/PowToon/svgo.git#9dd1802a0ded879a3d79e175e7b8696dc1cba965",
         "webpack-merge": "^4.1.2",
         "webpack-sources": "^1.1.0",
         "xmldom": "^0.1.27"
